@@ -1,11 +1,50 @@
 // Example express application adding the parse-server module to expose Parse
 // compatible API routes.
-
+var glob = require('glob');
 var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
 var ParseDashboard = require('parse-dashboard');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var bodyParser = require('body-parser');
+var compress = require('compression');
+var methodOverride = require('method-override');
+var flash = require('connect-flash');
 
+var app = express();
+
+app.set('views',  path.join(__dirname, '/views'));
+app.set('view engine', 'ejs');
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser('S3CRE7'));
+app.use(session({
+		secret:'guaranteed to be a secret',
+		resave: false,
+		saveUninitialized: true,
+		// store: new (require('express-sessions'))({
+	 //       storage: 'redis',
+	 //       host: config.redis.host, // optional 
+	 //       port: config.redis.port, // optional 
+	 //       collection: 'sessions', // optional 
+	 //       expire: 24 * 60 * 60 * 1000 // optional 
+	 //   }),
+		cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 },
+	}));
+app.use(flash());
+app.use(compress());
+app.use(express.static('public'));
+app.use(methodOverride(function (req, res) {
+		if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+			// look in urlencoded POST bodies and delete it
+			var method = req.body._method;
+			delete req.body._method;
+			return method;
+		}
+	}));
 var allowInsecureHTTP = true;
 var dashboard = new ParseDashboard({
   "apps": [
@@ -45,8 +84,6 @@ var api = new ParseServer({
 // If you wish you require them, you can set them as options in the initialization above:
 // javascriptKey, restAPIKey, dotNetKey, clientKey
 
-var app = express();
-
 // make the Parse Dashboard available at /dashboard
 app.use('/dashboard', dashboard);
 
@@ -57,17 +94,32 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 var mountPath = process.env.PARSE_MOUNT || '/parse';
 app.use(mountPath, api);
 
-// Parse Server plays nicely with the rest of your web routes
-app.get('/', function(req, res) {
-  res.status(200).send('Server is awaiting request');
-});
-
 // There will be a test page available on the /test path of your server url
 // Remove this before launching your app
-app.get('/test', function(req, res) {
-  res.sendFile(path.join(__dirname, '/public/test.html'));
-});
+// app.get('/test', function(req, res) {
+  // res.sendFile(path.join(__dirname, '/public/test.html'));
+// });
 
+var middlewares = glob.sync(path.join(__dirname, '/middlewares/*.js'));
+	middlewares.forEach(function (middleware) { 
+		require(middleware)(app);
+	});
+	
+var controllers = glob.sync(path.join(__dirname, '/routes/**/*.js'));
+	controllers.forEach(function (controller) {
+		require(controller)(app);
+	});
+
+app.use(function (err, req, res, next) {
+		if (err.code === 'EBADCSRFTOKEN'){
+			 // handle CSRF token errors here
+			res.status(500);
+			return res.render('505', {message: 'Martian Packet!'});
+		}else{
+			return next(err);
+		}
+	});
+	
 var port = process.env.PORT || 1337;
 var httpServer = require('http').createServer(app);
 httpServer.listen(port, function() {
