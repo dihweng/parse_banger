@@ -22,20 +22,6 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser('S3CRE7'));
-app.use(session({
-		secret:'guaranteed to be a secret',
-		resave: false,
-		saveUninitialized: true,
-		// store: new (require('express-sessions'))({
-	 //       storage: 'redis',
-	 //       host: config.redis.host, // optional 
-	 //       port: config.redis.port, // optional 
-	 //       collection: 'sessions', // optional 
-	 //       expire: 24 * 60 * 60 * 1000 // optional 
-	 //   }),
-		cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 },
-	}));
-app.use(flash());
 app.use(compress());
 app.use(express.static('public'));
 app.use(methodOverride(function (req, res) {

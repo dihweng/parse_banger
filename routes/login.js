@@ -4,6 +4,7 @@ var csrfProtection = csrf({ cookie: true });
 var AppConfig = require("../configs/config");
 var Parse = require('parse/node');
 Parse.initialize(AppConfig.APP_ID, null);
+Parse.serverURL = AppConfig.SERVER_URL;
 
 module.exports = function (app) {
     
@@ -27,7 +28,7 @@ module.exports = function (app) {
 			return res.redirect('/app');
           },
         error: function(user, error) {
-            req.flash('error', 'An error occured, please check your inputs and try again');
+            req.flash('error', error.message);
             return res.redirect('/login');
           }
         });
