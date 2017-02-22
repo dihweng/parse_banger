@@ -1,10 +1,9 @@
 var _ = require('underscore');
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
-var Parse = require('parse');
-var Parse = require('parse').Parse;
 var AppConfig = require("../configs/config");
-Parse.initialize(AppConfig.APP_ID, "Your JavaScript Key");
+var Parse = require('parse/node');
+Parse.initialize(AppConfig.APP_ID, null);
 
 module.exports = function (app) {
     
@@ -27,9 +26,9 @@ module.exports = function (app) {
 			req.flash('info', 'Your are now logged in. Your session starts now.');
 			return res.redirect('/app');
           },
-          error: function(user, error) {
+        error: function(user, error) {
             req.flash('error', 'An error occured, please check your inputs and try again');
-		    return res.redirect('/login');
+            return res.redirect('/login');
           }
         });
     });
