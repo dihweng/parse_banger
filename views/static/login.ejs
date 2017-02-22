@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title><%=title %></title>
+	<meta name="description" content="<%=title %>" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<!-- for ios 7 style, multi-resolution icon of 152x152 -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-barstyle" content="black-translucent">
+	<link rel="apple-touch-icon" href="images/logo.png">
+	<meta name="apple-mobile-web-app-title" content="<%=AppName %>">
+	<!-- for Chrome on Android, multi-resolution icon of 196x196 -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<link rel="shortcut icon" sizes="196x196" href="images/logo.png">
+	
+	<!-- style -->
+	<link rel="stylesheet" href="/css/animate.css/animate.min.css" type="text/css" />
+	<link rel="stylesheet" href="/css/glyphicons/glyphicons.css" type="text/css" />
+	<link rel="stylesheet" href="/css/font-awesome/css/font-awesome.min.css" type="text/css" />
+	<link rel="stylesheet" href="/css/material-design-icons/material-design-icons.css" type="text/css" />
+	<link rel="stylesheet" href="/css/ionicons/css/ionicons.min.css" type="text/css" />
+	<link rel="stylesheet" href="/css/simple-line-icons/css/simple-line-icons.css" type="text/css" />
+	<link rel="stylesheet" href="/css/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+
+	<!-- build:css css/styles/app.min.css -->
+	<link rel="stylesheet" href="/css/styles/app.min.css" type="text/css" />
+	<!-- endbuild -->
+	<link rel="stylesheet" href="/css/styles/font.css" type="text/css" />
+</head>
+<body>
+	<div class="app" id="app">
+<!-- ############ LAYOUT START-->
+        <div class="padding">
+            <div class="navbar">
+              <div class="pull-center">
+                <!-- brand -->
+                <a href="/" class="navbar-brand">
+                	<span class="hidden-folded inline"><%=AppName %></span>
+                </a>
+                <!-- / brand -->
+              </div>
+            </div>
+        </div>
+        <div class="b-t">
+            <div class="center-block w-xxl w-auto-xs p-y-md text-center">
+                <div class="p-a-md">
+                    <% if(flashErrorMessages.length) { %>
+                    <div class="alert alert-warning fade in">
+                        <a href="#" class="close" data-dismiss="alert">×</a>
+                        <% for(var i=0; i < flashErrorMessages.length; i++) {%>
+                           <p><%= flashErrorMessages[i] %></p>
+                        <% } %>
+                    </div>
+                    <% } %>
+                    <form name="form" action="/login" method="post">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <div class="form-group">
+                        <input name="email" type="text" class="form-control" placeholder="Email" required>
+                      </div>
+                      <div class="form-group">
+                        <input name="password" type="password" class="form-control" placeholder="Your Password" required>
+                      </div>      
+                      <div class="m-b-md">        
+                        <label class="md-check">
+                          <input type="checkbox"><i class="primary"></i> Keep me signed in
+                        </label>
+                      </div>
+                      <button type="submit" class="btn btn-lg black p-x-lg">Sign in</button>
+                    </form>
+                    <!--
+                    <div class="m-y">
+                      <a href="forgot-password.html" class="_600">Forgot password?</a>
+                    </div>
+                    -->
+                    <div>
+                      Do not have an account? 
+                      <a href="/register" class="text-primary _600">Sign up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!-- ############ LAYOUT END-->
+	</div>
+
+<!-- build:js scripts/app.min.js -->
+<script src="/scripts/app.min.js"></script>
+<!-- endbuild -->
+</body>
+</html>

@@ -12,6 +12,7 @@ var bodyParser = require('body-parser');
 var compress = require('compression');
 var methodOverride = require('method-override');
 var flash = require('connect-flash');
+var AppConfig = require('./configs/config');
 
 var app = express();
 
@@ -50,16 +51,16 @@ var dashboard = new ParseDashboard({
   "apps": [
     {
       "serverURL": process.env.SERVER_URL || 'http://wemunize-dretnan.c9users.io/parse',
-      "appId": process.env.APP_ID || 'myAppId',
-      "masterKey": process.env.MASTER_KEY || 'myMasterKey',
+      "appId": AppConfig.APP_ID,
+      "masterKey": AppConfig.MASTER_KEY,
       "allowInsecureHTTP": true,
-      "appName": "WeMunize"
+      "appName": AppConfig.AppName,
     }
   ],
   "users": [
     {
-      "user": process.env.DASHBOARD_USER || "retnan",
-      "pass": process.env.DASHBOARD_PASS || "yahweh",
+      "user": AppConfig.DASHBOARD_USER,
+      "pass": AppConfig.DASHBOARD_PASS
     }
   ],
 }, allowInsecureHTTP);
@@ -73,9 +74,9 @@ if (!databaseUri) {
 var api = new ParseServer({
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
   cloud: process.env.CLOUD_CODE_MAIN || __dirname + '/cloud/main.js',
-  appId: process.env.APP_ID || 'myAppId',
-  masterKey: process.env.MASTER_KEY || 'myMasterKey', //Add your master key here. Keep it secret!
-  serverURL: process.env.SERVER_URL || 'http://'+process.env.IP+':'+process.env.PORT+'/parse',  // Don't forget to change to https if needed
+  appId: AppConfig.APP_ID,
+  masterKey: AppConfig.MASTER_KEY,
+  serverURL: AppConfig.SERVER_URL
   // liveQuery: {
     // classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
   // }
