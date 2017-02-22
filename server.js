@@ -36,7 +36,7 @@ var allowInsecureHTTP = true;
 var dashboard = new ParseDashboard({
   "apps": [
     {
-      "serverURL": process.env.SERVER_URL || 'http://wemunize-dretnan.c9users.io/parse',
+      "serverURL": AppConfig.SERVER_URL,
       "appId": AppConfig.APP_ID,
       "masterKey": AppConfig.MASTER_KEY,
       "allowInsecureHTTP": true,
